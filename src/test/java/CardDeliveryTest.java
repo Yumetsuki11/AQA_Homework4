@@ -1,16 +1,13 @@
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.Keys;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
@@ -18,12 +15,8 @@ import static com.codeborne.selenide.Selenide.open;
 
 public class CardDeliveryTest {
 
-    String dateSetup(int dayAddition) {
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) + dayAddition);
-        Date date = cal.getTime();
-        return dateFormat.format(date);
+    public String dateSetup(int days) {
+        return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
     @ParameterizedTest
@@ -51,8 +44,8 @@ public class CardDeliveryTest {
 
         String notification__title = "Успешно!";
         String notification__content = "Встреча успешно забронирована на " + reserveDate;
-        Assertions.assertEquals(notification__title, $("div.notification__title").should(Condition.visible, Duration.ofSeconds(15)).getText().trim());
-        Assertions.assertEquals(notification__content, $("div.notification__content").should(Condition.visible, Duration.ofSeconds(15)).getText().trim());
+        $("div.notification__title").shouldHave(Condition.exactText(notification__title), Duration.ofSeconds(15));
+        $("div.notification__content").shouldHave(Condition.exactText(notification__content), Duration.ofSeconds(15));
     }
 
     @Test
@@ -70,7 +63,7 @@ public class CardDeliveryTest {
         $("button .button__text").click();
 
         String expected = "Доставка в выбранный город недоступна";
-        Assertions.assertEquals(expected, $("span[data-test-id='city'].input_invalid .input__sub").getText().trim());
+        $("span[data-test-id='city'].input_invalid .input__sub").shouldHave(Condition.exactText(expected), Duration.ofSeconds(15));
         $("div[data-test-id='notification']").should(Condition.hidden, Duration.ofSeconds(15));
     }
 
@@ -94,7 +87,7 @@ public class CardDeliveryTest {
         $("button .button__text").click();
 
         String expected = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
-        Assertions.assertEquals(expected, $("span[data-test-id='name'].input_invalid .input__sub").getText().trim());
+        $("span[data-test-id='name'].input_invalid .input__sub").shouldHave(Condition.exactText(expected), Duration.ofSeconds(15));
         $("div[data-test-id='notification']").should(Condition.hidden, Duration.ofSeconds(15));
     }
 
@@ -121,7 +114,7 @@ public class CardDeliveryTest {
         $("button .button__text").click();
 
         String expected = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
-        Assertions.assertEquals(expected, $("span[data-test-id='phone'].input_invalid .input__sub").getText().trim());
+        $("span[data-test-id='phone'].input_invalid .input__sub").shouldHave(Condition.exactText(expected), Duration.ofSeconds(15));
         $("div[data-test-id='notification']").should(Condition.hidden, Duration.ofSeconds(15));
     }
 
@@ -147,7 +140,7 @@ public class CardDeliveryTest {
         $("button .button__text").click();
 
         String expected = "Заказ на выбранную дату невозможен";
-        Assertions.assertEquals(expected, $("span[data-test-id='date'] .input_invalid .input__sub").getText().trim());
+        $("span[data-test-id='date'] .input_invalid .input__sub").shouldHave(Condition.exactText(expected), Duration.ofSeconds(15));
         $("div[data-test-id='notification']").should(Condition.hidden, Duration.ofSeconds(15));
     }
 
@@ -164,7 +157,7 @@ public class CardDeliveryTest {
         $("span[data-test-id='phone'] input").setValue("+15058425662");
         $("button .button__text").click();
 
-        Assertions.assertTrue($("label[data-test-id='agreement'].input_invalid").isDisplayed());
+        $("label[data-test-id='agreement'].input_invalid").shouldHave(Condition.visible);
         $("div[data-test-id='notification']").should(Condition.hidden, Duration.ofSeconds(15));
     }
 
@@ -192,7 +185,7 @@ public class CardDeliveryTest {
         $("button .button__text").click();
 
         String expected = "Неверно введена дата";
-        Assertions.assertEquals(expected, $("span[data-test-id='date'] .input_invalid .input__sub").getText().trim());
+        $("span[data-test-id='date'] .input_invalid .input__sub").shouldHave(Condition.exactText(expected), Duration.ofSeconds(15));
         $("div[data-test-id='notification']").should(Condition.hidden, Duration.ofSeconds(15));
     }
 
@@ -210,7 +203,7 @@ public class CardDeliveryTest {
         $("button .button__text").click();
 
         String expected = "Поле обязательно для заполнения";
-        Assertions.assertEquals(expected, $("span[data-test-id='city'].input_invalid .input__sub").getText().trim());
+        $("span[data-test-id='city'].input_invalid .input__sub").shouldHave(Condition.exactText(expected), Duration.ofSeconds(15));
         $("div[data-test-id='notification']").should(Condition.hidden, Duration.ofSeconds(15));
     }
 
@@ -228,7 +221,7 @@ public class CardDeliveryTest {
         $("button .button__text").click();
 
         String expected = "Поле обязательно для заполнения";
-        Assertions.assertEquals(expected, $("span[data-test-id='name'].input_invalid .input__sub").getText().trim());
+        $("span[data-test-id='name'].input_invalid .input__sub").shouldHave(Condition.exactText(expected), Duration.ofSeconds(15));
         $("div[data-test-id='notification']").should(Condition.hidden, Duration.ofSeconds(15));
     }
 
@@ -245,7 +238,7 @@ public class CardDeliveryTest {
         $("button .button__text").click();
 
         String expected = "Поле обязательно для заполнения";
-        Assertions.assertEquals(expected, $("span[data-test-id='phone'].input_invalid .input__sub").getText().trim());
+        $("span[data-test-id='phone'].input_invalid .input__sub").shouldHave(Condition.exactText(expected), Duration.ofSeconds(15));
         $("div[data-test-id='notification']").should(Condition.hidden, Duration.ofSeconds(15));
     }
 }
